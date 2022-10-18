@@ -17,29 +17,18 @@ def mkdf(california):
     df['Price'] = california['target']
 
 # データの分布を確認、dfをヒストグラムにし、４８つの棒で表現し、図の大きさを横１４，縦１０を表示
-    
-# axes = df.hist(bins = 48,figsize = (14,10))
+    axes = df.hist(bins = 48,figsize = (14,10))
 
 # dfの'Price'の最大値未満のデータのみ取得
     df = df[df['Price']<df['Price'].max()]
     return df
 
-def sdz():
-# 標準化
-    sds = StandardScaler()
-    x_training = sds.fit_transform(x_training)
-    x_test = sds.transform(x_test)
-    
-    y_training = sds.fit_transform(y_training)
-    y_test = sds.transform(y_test)
-
 def learn_model(model):
 # modelをx_training,y_trainingに適合させる
     model.fit(x_training,y_training)
 
-def display_fig():
 #図の表示
-    
+def display_fig():
 # 平均二乗偏差を計算
     rmse = mean_squared_error(y_test,model.predict(x_test),squared = False)
 # 図の大きさを横５，縦５として表示
