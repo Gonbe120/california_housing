@@ -23,6 +23,30 @@ def mkdf(california):
     df = df[df['Price']<df['Price'].max()]
     return df
 
+# dfからx,yを定義
+def get_x_y(df):
+    x = df.drop(['Price'],axis = 1)
+    y = df['Price'] 
+    return x,y
+
+# 訓練データとテストデータを作成,前処理
+def preprocessing(x,y):
+    x_training,x_test,y_training,y_test = train_test_split(x,y,test_size=0.1,random_state = 42)
+# 目的変数を標準化するためにy_training,y_testを二次元配列に変換
+    y_training = y_training.values.reshape(-1,1)
+    y_test = y_test.values.reshape(-1,1)
+    return x_training,x_test,y_training,y_test
+
+# 標準化
+def sdz (x_training,x_test,y_training,y_test):
+    sds = StandardScaler()
+    x_training = sds.fit_transform(x_training)
+    x_test = sds.transform(x_test)
+    
+    y_training = sds.fit_transform(y_training)
+    y_test = sds.transform(y_test)
+    return x_training,x_test,y_training,y_test
+
 def learn_model(model):
 # modelをx_training,y_trainingに適合させる
     model.fit(x_training,y_training)
@@ -58,21 +82,13 @@ if __name__=='__main__':
 # californiaにfetch_california_housingを代入し、データフレームを作成
     california = fetch_california_housing()
     df = mkdf(california)
-# dfからx,yを定義
-    x = df.drop(['Price'],axis = 1)
-    y = df['Price'] 
-# randaom_state = 42で訓練データとテストデータを作成
-    x_training,x_test,y_training,y_test = train_test_split(x,y,test_size=0.1,random_state = 42)
-# 目的変数を標準化するためにy_training,y_testを二次元配列に変換
-    y_training = y_training.values.reshape(-1,1)
-    y_test = y_test.values.reshape(-1,1)
-# 標準化
-    sds = StandardScaler()
-    x_training = sds.fit_transform(x_training)
-    x_test = sds.transform(x_test)
-    
-    y_training = sds.fit_transform(y_training)
-    y_test = sds.transform(y_test)
+# x,yの定義
+    (x,y) = get_x_y(df)
+
+#x,yを訓練データ、テストデータに分割、前処理
+    x_training,x_test,y_training,y_test = preprocessing(x,y)
+    x_training,x_test,y_training,y_test = sdz(x_training,x_test,y_training,y_test)
+
 # modelにLinearRegressionを代入
     model = LinearRegression(fit_intercept = False)
 # 学習 
